@@ -13,11 +13,14 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.wells.constants.OverridenStatusEnum;
+import com.wells.constants.StatusEnum;
 import com.wellsafrgo.exception.InvalidArgumentException;
 import com.wellsafrgo.exception.ResourceNotFoundException;
 import com.wellsafrgo.model.NPSDomain;
 import com.wellsafrgo.model.NamePronounciationRecord;
 import com.wellsafrgo.model.empUpdateRecord;
+import com.wellsfargo.response.EmpRecordResponse;
 import com.wellsfargo.response.NameSearchResponse;
 
 @Service
@@ -35,7 +38,7 @@ public class NPSService {
 
 			NamePronounciationRecord npsData = new NamePronounciationRecord(userData.getEmpId(), userData.getfName().toLowerCase(),
 					userData.getlName().toLowerCase(), userData.getpName().toLowerCase(), userData.getCountry_code(),
-					userData.getMultipartFile().getBytes(), userData.getCreated_by(), userData.getModified_by(), userData.getOptedformat(), null, userData.getStatus(), userData.getOverridenStatus(),userData.getChannel(), null);
+					userData.getMultipartFile().getBytes(), userData.getCreated_by(), userData.getModified_by(), userData.getOptedformat(), null, StatusEnum.ACTIVE.getValue(), OverridenStatusEnum.NEW.getValue(),userData.getChannel(), null);
 			NamePronounciationRecord record = npsRepository.save(npsData);
 			if (record != null) {
 				return true;
@@ -57,41 +60,57 @@ public class NPSService {
 		return record;
 	}
 	
+	public NameSearchResponse getAllEmpRecords() {
+		
+		List<NamePronounciationRecord> records = npsRepository.findAll();
+		
+		List<EmpRecordResponse> emprecords = records.stream().map(record -> {
+			 EmpRecordResponse empInfo = new EmpRecordResponse();
+			  empInfo.setEmpId(record.getEmpid());
+			  empInfo.setFirst_name(record.getFirst_name());
+			  empInfo.setLast_name(record.getLast_name());
+			  empInfo.setPreferred_name(record.getPreferred_name());
+			  empInfo.setCountry(record.getCountry_code());
+			  empInfo.setOptdFormat(record.getCountry_code());
+			  return empInfo;
+		  }).collect(Collectors.toList());
+		NameSearchResponse response = new NameSearchResponse();
+		response.setNpsList(emprecords);
+		response.setSearchNameCount(emprecords.size());
+		return response;
+	}
+	
 	public NameSearchResponse getFilesforName(String name, String countryCode) {
-		Map<String, NPSDomain> map = new HashMap<>();
+		Map<String, EmpRecordResponse> map = new HashMap<>();
 		if (name != null && !name.isEmpty()) {
 			List<String> list = Stream.of(name.split(" ")).collect(Collectors.toList());
 			list.forEach(item -> {
-				List<NPSDomain> dlist = getFilesbyName(item,countryCode);
+				List<EmpRecordResponse> dlist = getFilesbyName(item,countryCode);
 				dlist.forEach(i -> {
 					map.put(i.getEmpId(), i);
 				});
 				//domainList.addAll(getFilesbyName(item)) ;
 			});
 		}
-		List<NPSDomain> domainList = (List<NPSDomain>) new ArrayList(map.values());
+		List<EmpRecordResponse> domainList = (List<EmpRecordResponse>) new ArrayList(map.values());
 		NameSearchResponse response = new NameSearchResponse();
 		response.setNpsList(domainList);
 		response.setSearchNameCount(domainList.size());
 		return response;
 	}
 	
-	public List<NPSDomain> getFilesbyCountry(String cuntry) {
+	public List<EmpRecordResponse> getFilesbyCountry(String cuntry) {
 		List<NamePronounciationRecord> records = npsRepository.getFilesbycountry( cuntry);
 
-		List<NPSDomain> npsEmpList = records.stream().map(record -> {
-			NPSDomain empInfo = new NPSDomain();
+		List<EmpRecordResponse> npsEmpList = records.stream().map(record -> {
+			EmpRecordResponse empInfo = new EmpRecordResponse();
 			empInfo.setEmpId(record.getEmpid());
-			empInfo.setfName(record.getFirst_name());
-			empInfo.setlName(record.getLast_name());
-			empInfo.setpName(record.getPreferred_name());
-			empInfo.setCountry_code(record.getCountry_code());
-			empInfo.setCreated_by(record.getCreated_by());
-			empInfo.setModified_by(record.getModified_by());
-			empInfo.setOptedformat(record.getOpted_format());
-			empInfo.setStatus(record.getStatus());
-			empInfo.setOverridenStatus(record.getOverriden_Status());
-			return empInfo;
+			  empInfo.setFirst_name(record.getFirst_name());
+			  empInfo.setLast_name(record.getLast_name());
+			  empInfo.setPreferred_name(record.getPreferred_name());
+			  empInfo.setCountry(record.getCountry_code());
+			  empInfo.setOptdFormat(record.getCountry_code());
+			  return empInfo;
 		}).collect(Collectors.toList());
 
 		if (npsEmpList.size() <= 0) {
@@ -101,23 +120,19 @@ public class NPSService {
 	}
 	
 	
-	public List<NPSDomain> getFilesbyName(String name, String countryCode)  {
+	public List<EmpRecordResponse> getFilesbyName(String name, String countryCode)  {
 		
 		List<NamePronounciationRecord> records = npsRepository.getFilesbyName(name.toLowerCase(), countryCode);
 		
-		List<NPSDomain> npsEmpList = records.stream().map(record -> {
-			NPSDomain empInfo = new NPSDomain();
+		List<EmpRecordResponse> npsEmpList = records.stream().map(record -> {
+			EmpRecordResponse empInfo = new EmpRecordResponse();
 			empInfo.setEmpId(record.getEmpid());
-			empInfo.setfName(record.getFirst_name());
-			empInfo.setlName(record.getLast_name());
-			empInfo.setpName(record.getPreferred_name());
-			empInfo.setCountry_code(record.getCountry_code());
-			empInfo.setCreated_by(record.getCreated_by());
-			empInfo.setModified_by(record.getModified_by());
-			empInfo.setOptedformat(record.getOpted_format());
-			empInfo.setStatus(record.getStatus());
-			empInfo.setOverridenStatus(record.getOverriden_Status());
-            return empInfo;
+			  empInfo.setFirst_name(record.getFirst_name());
+			  empInfo.setLast_name(record.getLast_name());
+			  empInfo.setPreferred_name(record.getPreferred_name());
+			  empInfo.setCountry(record.getCountry_code());
+			  empInfo.setOptdFormat(record.getCountry_code());
+			  return empInfo;
         })
         .collect(Collectors.toList());
 		
@@ -127,9 +142,10 @@ public class NPSService {
 		return npsEmpList;
 	}
 
-	public Stream<NamePronounciationRecord> getAllFiles() {
-		return npsRepository.findAll().stream();
-	}
+	/*
+	 * public Stream<NamePronounciationRecord> getAllFiles() {
+	 * npsRepository.findAll().stream(); }
+	 */
 
 	public void deleteRecord(String empId) {
 		npsRepository.deleteById(empId);
@@ -143,7 +159,7 @@ public class NPSService {
 		try {
 			if (emprecord != null) {
 				emprecord.setOverriden_file(empdata.getMultipartFile().getBytes());
-				emprecord.setOverriden_Status("PENDING");
+				emprecord.setOverriden_Status(OverridenStatusEnum.PENDING.getValue());
 				emprecord.setChannel(empdata.getChannel());
 				emprecord.setAudio_url(empdata.getAudio_file_url());
 				npsRepository.save(emprecord);
@@ -165,9 +181,9 @@ public class NPSService {
 		}
 		NamePronounciationRecord emprecord = this.getFilebyEmpId(empId);
 		
-		if (emprecord.getOverriden_Status() == "PENDING") {
+		if (emprecord.getOverriden_Status() == OverridenStatusEnum.PENDING.getValue()) {
 			emprecord.setAudio_file(emprecord.getOverriden_file());
-			emprecord.setOverriden_Status("APPROVED");
+			emprecord.setOverriden_Status(OverridenStatusEnum.APPROVED.getValue());
 			emprecord.setOverriden_file(null);
 			npsRepository.save(emprecord);
 		} else {
@@ -182,7 +198,7 @@ public class NPSService {
 			throw new InvalidArgumentException(" EmpID is required to update record.");
 		}
 		NamePronounciationRecord emprecord = this.getFilebyEmpId(empId);
-		emprecord.setOverriden_Status("REJECTED");
+		emprecord.setOverriden_Status(OverridenStatusEnum.REJECTED.getValue());
 		emprecord.setOverriden_file(null);
 		npsRepository.save(emprecord);
 		//send update to notification table? notification to be received by user
