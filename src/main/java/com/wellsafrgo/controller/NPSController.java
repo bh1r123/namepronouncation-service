@@ -22,10 +22,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wells.constants.OptedFormatEnum;
 import com.wellsafrgo.model.NPSDomain;
 import com.wellsafrgo.model.NamePronounciationRecord;
 import com.wellsafrgo.model.empUpdateRecord;
 import com.wellsafrgo.repository.NPSService;
+import com.wellsfargo.response.EmpRecordResponse;
 import com.wellsfargo.response.NameSearchResponse;
 
 @CrossOrigin("*")
@@ -47,8 +49,15 @@ public class NPSController {
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 	}
+	
+	@GetMapping("/getAllEmpRecords")
+	public ResponseEntity<NameSearchResponse> getAllEmprecords() {
+		NameSearchResponse searchResponse = npsService.getAllEmpRecords();
+		System.out.println("record size : " + searchResponse.getSearchNameCount());
+		return ResponseEntity.ok(searchResponse);
+	}
     
-	@GetMapping("/getEmpRecords")
+	@GetMapping("/getEmpRecordsByName")
 	public ResponseEntity<NameSearchResponse> getEmprecordsByName(@RequestParam String name, @RequestParam String countrycd) {
 		NameSearchResponse searchResponse = npsService.getFilesforName(name, countrycd);
 		System.out.println("record size : " + searchResponse.getSearchNameCount());
@@ -56,8 +65,8 @@ public class NPSController {
 	}
 	
 	@GetMapping("/getEmpRecordsbyCountry")
-	public ResponseEntity<List<NPSDomain>> getEmprecordsByCountry( @RequestParam String countrycd) {
-		List<NPSDomain> records = npsService.getFilesbyCountry(countrycd);
+	public ResponseEntity<List<EmpRecordResponse>> getEmprecordsByCountry( @RequestParam String countrycd) {
+		List<EmpRecordResponse> records = npsService.getFilesbyCountry(countrycd);
 		System.out.println("record size : " + records.size());
 		return ResponseEntity.ok(records);
 	}
@@ -69,7 +78,7 @@ public class NPSController {
 
 		return ResponseEntity.ok().contentType(MediaType.parseMediaType("audio/wave"))
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + record.getEmpid() + ".wav\"")
-				.body(new ByteArrayResource(audioFormat.equalsIgnoreCase("standard")? record.getAudio_file() : record.getOverriden_file()));
+				.body(new ByteArrayResource(audioFormat.equalsIgnoreCase(OptedFormatEnum.STANDARD.getValue())? record.getAudio_file() : record.getOverriden_file()));
 
 	}
 	
