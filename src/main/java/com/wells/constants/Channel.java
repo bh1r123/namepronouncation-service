@@ -1,5 +1,8 @@
 package com.wells.constants;
 
+/*
+ * test commit
+ */
 public enum Channel {
 
 	IVR("IVR"),
