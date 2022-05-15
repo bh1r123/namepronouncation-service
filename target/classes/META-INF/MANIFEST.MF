@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Built-By: Avigh
+Build-Jdk: 17.0.2
+Implementation-Title: spring-boot-nps
+Implementation-Version: 0.0.1-SNAPSHOT
+Implementation-Vendor-Id: com.wells
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-boot
+ -starter-parent/spring-boot-nps
+Main-Class: com.wellsafrgo.NamePronunciaton
+Created-By: Maven Integration for Eclipse
+
