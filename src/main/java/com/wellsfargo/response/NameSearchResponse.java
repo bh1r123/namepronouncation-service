@@ -2,14 +2,12 @@ package com.wellsfargo.response;
 
 import java.util.List;
 
-import com.wellsafrgo.model.NPSDomain;
-
 public class NameSearchResponse {
-	List<NPSDomain> npsList ;
-	public List<NPSDomain> getNpsList() {
+	List<EmpRecordResponse> npsList ;
+	public List<EmpRecordResponse> getNpsList() {
 		return npsList;
 	}
-	public void setNpsList(List<NPSDomain> npsList) {
+	public void setNpsList(List<EmpRecordResponse> npsList) {
 		this.npsList = npsList;
 	}
 	public int getSearchNameCount() {
