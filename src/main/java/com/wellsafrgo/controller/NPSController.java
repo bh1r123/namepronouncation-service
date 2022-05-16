@@ -78,7 +78,7 @@ public class NPSController {
 		return ResponseEntity.ok(records);
 	}
 	
-	@GetMapping(value= "/getEmpAudioRecord" ,produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	@GetMapping(value= "/getEmpAudioRecord")
 	public ResponseEntity<ByteArrayResource> getEmpCustAudioRecord(@RequestParam String empId,
 			@RequestParam String audioFormat) throws IOException, SQLException, URISyntaxException {
 		NamePronounciationRecord record = npsService.getFilebyEmpId(empId);
@@ -87,8 +87,6 @@ public class NPSController {
 				: record.getOverriden_file();
 
 		return ResponseEntity.ok().contentLength(data.length)
-				.cacheControl(CacheControl.noCache())
-				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE)
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + record.getEmpid() + ".wav\"")
 				.body(new ByteArrayResource(data));
 
