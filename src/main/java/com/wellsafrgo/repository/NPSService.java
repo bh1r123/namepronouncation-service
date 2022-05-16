@@ -87,6 +87,7 @@ public class NPSService {
 			  empInfo.setPreferred_name(record.getPreferred_name());
 			  empInfo.setCountry(record.getCountry_code());
 			  empInfo.setOptdFormat(record.getOpted_format());
+			  empInfo.setOpted(record.getOpted());
 			  return empInfo;
 		  }).collect(Collectors.toList());
 		
@@ -100,6 +101,7 @@ public class NPSService {
 					empInfo.setPreferred_name(record.getPreferred_name());
 					empInfo.setCountry(record.getCountry_code());
 					empInfo.setOptdFormat(record.getOpted_format());
+					empInfo.setOpted(record.getOpted());
 					return empInfo;
 				}).collect(Collectors.toList());
 		
@@ -113,6 +115,7 @@ public class NPSService {
 					empInfo.setPreferred_name(record.getPreferred_name());
 					empInfo.setCountry(record.getCountry_code());
 					empInfo.setOptdFormat(record.getOpted_format());
+					 empInfo.setOpted(record.getOpted());
 					return empInfo;
 				}).collect(Collectors.toList());
 		
@@ -127,6 +130,7 @@ public class NPSService {
 			  empInfo.setPreferred_name(record.getPreferred_name());
 			  empInfo.setCountry(record.getCountry_code());
 			  empInfo.setOptdFormat(record.getOpted_format());
+			  empInfo.setOpted(record.getOpted());
 			  return empInfo;
 		  }).collect(Collectors.toList());
 		
@@ -141,6 +145,7 @@ public class NPSService {
 					empInfo.setPreferred_name(record.getPreferred_name());
 					empInfo.setCountry(record.getCountry_code());
 					empInfo.setOptdFormat(record.getOpted_format());
+					 empInfo.setOpted(record.getOpted());
 					return empInfo;
 				}).collect(Collectors.toList());
 		
@@ -196,6 +201,7 @@ public class NPSService {
 			  empInfo.setPreferred_name(record.getPreferred_name());
 			  empInfo.setCountry(record.getCountry_code());
 			  empInfo.setOptdFormat(record.getOpted_format());
+			  empInfo.setOpted(record.getOpted());
 			  return empInfo;
 		}).collect(Collectors.toList());
 
@@ -218,6 +224,7 @@ public class NPSService {
 			  empInfo.setPreferred_name(record.getPreferred_name());
 			  empInfo.setCountry(record.getCountry_code());
 			  empInfo.setOptdFormat(record.getOpted_format());
+			  empInfo.setOpted(record.getOpted());
 			  return empInfo;
         })
         .collect(Collectors.toList());

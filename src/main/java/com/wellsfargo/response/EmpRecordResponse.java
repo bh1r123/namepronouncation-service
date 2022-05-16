@@ -8,6 +8,15 @@ public class EmpRecordResponse {
 	String country;
 	String optdFormat;
 	String empId;
+	String opted;
+
+	public String getOpted() {
+		return opted;
+	}
+
+	public void setOpted(String opted) {
+		this.opted = opted;
+	}
 
 	public String getFirst_name() {
 		return first_name;
