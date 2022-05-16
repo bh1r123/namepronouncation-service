@@ -13,6 +13,8 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.wells.constants.OptedEnum;
+import com.wells.constants.OptedFormatEnum;
 import com.wells.constants.OverridenStatusEnum;
 import com.wells.constants.StatusEnum;
 import com.wellsafrgo.exception.InvalidArgumentException;
@@ -43,7 +45,8 @@ public class NPSService {
 
 			NamePronounciationRecord npsData = new NamePronounciationRecord(userData.getEmpId(), userData.getfName().toLowerCase(),
 					userData.getlName().toLowerCase(), userData.getpName().toLowerCase(), userData.getCountry_code(),
-					userData.getMultipartFile().getBytes(), userData.getCreated_by(), userData.getModified_by(), userData.getOptedformat(), null, StatusEnum.ACTIVE.getValue(), OverridenStatusEnum.NEW.getValue(),userData.getChannel(), null);
+					userData.getMultipartFile().getBytes(), userData.getCreated_by(), userData.getModified_by(), userData.getOptedformat(), null, StatusEnum.ACTIVE.getValue(), 
+					OverridenStatusEnum.NEW.getValue(),userData.getChannel(), null, OptedEnum.YES.getValue());
 			NamePronounciationRecord record = npsRepository.save(npsData);
 			if (record != null) {
 				return true;
@@ -186,15 +189,48 @@ public class NPSService {
 		}
 		NamePronounciationRecord emprecord = this.getFilebyEmpId(empId);
 		
-		if (emprecord.getOverriden_Status() == OverridenStatusEnum.PENDING.getValue()) {
+		if (emprecord.getOverriden_Status().equalsIgnoreCase(OverridenStatusEnum.PENDING.getValue())) {
 			emprecord.setAudio_file(emprecord.getOverriden_file());
 			emprecord.setOverriden_Status(OverridenStatusEnum.APPROVED.getValue());
+			emprecord.setOpted_format(OptedFormatEnum.CUSTOM.getValue());
 			emprecord.setOverriden_file(null);
 			npsRepository.save(emprecord);
 		} else {
 			throw new InvalidArgumentException("EMP should be in PENDING state before it needs approval");
 			
 		}
+		//send update to notification table? notification to be received by user
+	}
+	
+	public void empOptout(String empId) throws IOException {
+		if (empId == null || empId.isEmpty()) {
+			throw new InvalidArgumentException(" EmpID is required to update record.");
+		}
+		NamePronounciationRecord emprecord = this.getFilebyEmpId(empId);
+		
+		if (emprecord != null && emprecord.getStatus().equalsIgnoreCase(StatusEnum.ACTIVE.getValue())) {
+			emprecord.setOpted(OptedEnum.NO.getValue());
+			npsRepository.save(emprecord);
+		} else {
+			throw new InvalidArgumentException(" Unabe to OPTOUT of Pronouncation tool. Please try later");
+			
+		}
+		//send update to notification table? notification to be received by user
+	}
+	
+	public String empOptIn(String empId) throws IOException {
+		if (empId == null || empId.isEmpty()) {
+			throw new InvalidArgumentException(" EmpID is required to update record.");
+		}
+		NamePronounciationRecord emprecord = this.getFilebyEmpId(empId);
+		
+		if (emprecord != null && emprecord.getStatus().equalsIgnoreCase(StatusEnum.ACTIVE.getValue()) && emprecord.getOpted().equalsIgnoreCase(OptedEnum.NO.getValue())) {
+			emprecord.setOpted(OptedEnum.YES.getValue());
+			npsRepository.save(emprecord);
+			return  "Emp is opted in successfully name pronouncation tool"; 
+		}  else {
+				return "Emp is already opted in for name pronouncation tool ";
+			}
 		//send update to notification table? notification to be received by user
 	}
 	 

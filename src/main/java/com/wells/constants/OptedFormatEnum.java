@@ -2,7 +2,6 @@ package com.wells.constants;
 
 public enum OptedFormatEnum {
 
-	NOT_OPTED("NOT_OPTED"),
 	STANDARD("STANDARD"),
 	CUSTOM("CUSTOM");
 	

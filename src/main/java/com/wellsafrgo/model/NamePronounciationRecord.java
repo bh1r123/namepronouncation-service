@@ -76,6 +76,17 @@ public class NamePronounciationRecord {
 	@Column(name= "AUDIO_FILE_URL")
 	private String audio_url;
 
+	@Column(name= "OPTED")
+	private String opted;
+
+
+	public String getOpted() {
+		return opted;
+	}
+
+	public void setOpted(String opted) {
+		this.opted = opted;
+	}
 
 	public NamePronounciationRecord() {
 		
@@ -211,7 +222,7 @@ public class NamePronounciationRecord {
 	
 	public NamePronounciationRecord(String empId, String fname, String lname, String pname,String countryCode,
     		byte[] audioFile, String createdby, String modifiedby,
-    		                           String optedformat, byte[] overridenFile, String status, String overridenStatus , String channel, String audio_url) {
+    		                           String optedformat, byte[] overridenFile, String status, String overridenStatus , String channel, String audio_url, String opted) {
 		this.empid = empId;
 		this.first_name=fname;
 		this.last_name=lname;
@@ -226,6 +237,7 @@ public class NamePronounciationRecord {
 		this.overriden_Status=overridenStatus;
 		this.channel = channel;
 		this.audio_url = audio_url;
+		this.opted = opted;
 ;	}
 
 }

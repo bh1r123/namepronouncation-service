@@ -85,7 +85,7 @@ public class NPSController {
 
 		return ResponseEntity.ok().contentType(MediaType.parseMediaType("audio/wave"))
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + record.getEmpid() + ".wav\"")
-				.body(new ByteArrayResource(audioFormat.equalsIgnoreCase(OptedFormatEnum.STANDARD.getValue())? record.getAudio_file() : record.getOverriden_file()));
+				.body(new ByteArrayResource(audioFormat.equalsIgnoreCase(record.getOpted_format())? record.getAudio_file() : record.getOverriden_file()));
 
 	}
 	
@@ -135,6 +135,21 @@ public class NPSController {
 			throws IOException, SQLException, URISyntaxException {
 		npsService.approveRecord(empId);
 		String message = "Successfully approved the custom record for EmpId :  " + empId;
+		return ResponseEntity.status(HttpStatus.OK).body(message);
+
+	}
+	
+	@PostMapping(value = "/OptOut", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> empOptOut(@RequestParam(required=true) String empId) throws Exception {
+		npsService.empOptout(empId);
+		String message = "Successfully Opted out the Employee  :  " + empId;
+		return ResponseEntity.status(HttpStatus.OK).body(message);
+
+	}
+
+	@PostMapping(value = "/OptIn", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> empOptIn(@RequestParam(required=true) String empId) throws Exception {
+		String message = npsService.empOptIn(empId);
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 
 	}
