@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import org.apache.commons.io.FileUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,6 +35,8 @@ import com.wellsafrgo.model.TTSResponse;
  * @implSpec - this controller has one end point mapping as /getSpeech which uses application/json as the type in api communication.
  * Using ngrok exposing the localhost:<port> to public over the internet. 
  */
+
+@CrossOrigin("*")
 @RestController
 public class GoogleCloudAPIController {
 	

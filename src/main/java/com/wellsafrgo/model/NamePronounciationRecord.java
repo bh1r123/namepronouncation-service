@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -55,7 +56,7 @@ public class NamePronounciationRecord {
 	
 	@LastModifiedDate
 	@Column(name= "MODIFIED_AT")
-	private Date modified_at;
+	private Date modifiedat;
 	
 	@Column(name= "OPTED_FORMAT")
 	private String	opted_format;
@@ -164,12 +165,12 @@ public class NamePronounciationRecord {
 		this.created_at = created_at;
 	}
 
-	public Date getModified_at() {
-		return modified_at;
+	public Date getModifiedat() {
+		return modifiedat;
 	}
 
-	public void setModified_at(Date modified_at) {
-		this.modified_at = modified_at;
+	public void setModifiedat(Date modifiedat) {
+		this.modifiedat = modifiedat;
 	}
 
 	public String getOpted_format() {
@@ -219,6 +220,7 @@ public class NamePronounciationRecord {
 	public void setAudio_url(String audio_url) {
 		this.audio_url = audio_url;
 	}
+	
 	
 	public NamePronounciationRecord(String empId, String fname, String lname, String pname,String countryCode,
     		byte[] audioFile, String createdby, String modifiedby,

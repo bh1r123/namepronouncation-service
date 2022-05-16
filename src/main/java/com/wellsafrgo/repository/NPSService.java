@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.wells.constants.ActionEnum;
@@ -77,7 +78,7 @@ public class NPSService {
 	
 	public NameSearchResponse getAllEmpRecords(String status) {
 		NameSearchResponse response = new NameSearchResponse();
-		List<NamePronounciationRecord> records = npsRepository.findAll();
+		List<NamePronounciationRecord> records = npsRepository.findAll(Sort.by("modifiedat").descending());
 		
 		List<EmpRecordResponse> allEmprecords = records.stream().map(record -> {
 			 EmpRecordResponse empInfo = new EmpRecordResponse();
