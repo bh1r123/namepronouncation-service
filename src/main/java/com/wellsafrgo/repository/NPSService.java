@@ -17,6 +17,8 @@ import com.wells.constants.OverridenStatusEnum;
 import com.wells.constants.StatusEnum;
 import com.wellsafrgo.exception.InvalidArgumentException;
 import com.wellsafrgo.exception.ResourceNotFoundException;
+import com.wellsafrgo.model.CountryData;
+import com.wellsafrgo.model.CountryRecord;
 import com.wellsafrgo.model.NPSDomain;
 import com.wellsafrgo.model.NamePronounciationRecord;
 import com.wellsafrgo.model.empUpdateRecord;
@@ -29,6 +31,9 @@ public class NPSService {
 
 	@Autowired
 	private NPSRepository npsRepository;
+	
+	@Autowired
+	private CountryRepository countryRepository;
 	
 	public boolean save(NPSDomain userData) {
 		try {
@@ -202,5 +207,22 @@ public class NPSService {
 		emprecord.setOverriden_file(null);
 		npsRepository.save(emprecord);
 		//send update to notification table? notification to be received by user
+	}
+	
+	public void uploadCountries(List<CountryRecord> countries) {
+		countryRepository.saveAll(countries);
+	}
+	
+	public List<CountryData> getCountries() {
+		List<CountryRecord> countries = countryRepository.findAll();
+		List<CountryData> ctrydata = countries.stream().map(item ->{
+			CountryData data  = new CountryData();
+			data.setCode(item.getCode());
+			data.setName(item.getName());
+			return data;
+			
+		}).collect(Collectors.toList());
+		
+		return ctrydata;
 	}
 }

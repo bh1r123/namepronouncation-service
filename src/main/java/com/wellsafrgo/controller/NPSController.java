@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -18,11 +19,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wells.constants.OptedFormatEnum;
+import com.wellsafrgo.model.CountryData;
+import com.wellsafrgo.model.CountryRecord;
 import com.wellsafrgo.model.NPSDomain;
 import com.wellsafrgo.model.NamePronounciationRecord;
 import com.wellsafrgo.model.empUpdateRecord;
@@ -141,4 +148,30 @@ public class NPSController {
 		return ResponseEntity.status(HttpStatus.OK).body(message);
 
 	}
+	
+	@PostMapping(value = "/uploadCountry", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void uploadCountries(@RequestBody String countrylist) {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+		try {
+			List<CountryData> countries = mapper.readValue(countrylist, new TypeReference<List<CountryData>>() {
+			});
+			List<CountryRecord> records = countries.stream().map(item -> {
+				CountryRecord record = new CountryRecord();
+				record.setCode(item.getCode());
+				record.setName(item.getName());
+				return record;
+			}).collect(Collectors.toList());
+			npsService.uploadCountries(records);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@GetMapping(value = "/getCountryList")
+	public ResponseEntity<List<CountryData>> getCountryList() {
+		List<CountryData> data = npsService.getCountries();
+		return ResponseEntity.status(HttpStatus.OK).body(data);
+	}
+
 }
