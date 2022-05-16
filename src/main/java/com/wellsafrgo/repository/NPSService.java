@@ -79,7 +79,7 @@ public class NPSService {
 			  empInfo.setLast_name(record.getLast_name());
 			  empInfo.setPreferred_name(record.getPreferred_name());
 			  empInfo.setCountry(record.getCountry_code());
-			  empInfo.setOptdFormat(record.getCountry_code());
+			  empInfo.setOptdFormat(record.getOpted_format());
 			  return empInfo;
 		  }).collect(Collectors.toList());
 		NameSearchResponse response = new NameSearchResponse();
@@ -117,7 +117,7 @@ public class NPSService {
 			  empInfo.setLast_name(record.getLast_name());
 			  empInfo.setPreferred_name(record.getPreferred_name());
 			  empInfo.setCountry(record.getCountry_code());
-			  empInfo.setOptdFormat(record.getCountry_code());
+			  empInfo.setOptdFormat(record.getOpted_format());
 			  return empInfo;
 		}).collect(Collectors.toList());
 
@@ -139,7 +139,7 @@ public class NPSService {
 			  empInfo.setLast_name(record.getLast_name());
 			  empInfo.setPreferred_name(record.getPreferred_name());
 			  empInfo.setCountry(record.getCountry_code());
-			  empInfo.setOptdFormat(record.getCountry_code());
+			  empInfo.setOptdFormat(record.getOpted_format());
 			  return empInfo;
         })
         .collect(Collectors.toList());
