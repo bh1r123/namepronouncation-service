@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wells.constants.OptedFormatEnum;
 import com.wellsafrgo.model.CountryData;
 import com.wellsafrgo.model.CountryRecord;
 import com.wellsafrgo.model.NPSDomain;
@@ -82,7 +83,7 @@ public class NPSController {
 			@RequestParam String audioFormat) throws IOException, SQLException, URISyntaxException {
 		NamePronounciationRecord record = npsService.getFilebyEmpId(empId);
 
-		byte[] data = audioFormat.equalsIgnoreCase(record.getOpted_format()) ? record.getAudio_file()
+		byte[] data = audioFormat.equalsIgnoreCase(OptedFormatEnum.STANDARD.getValue()) ? record.getAudio_file()
 				: record.getOverriden_file();
 
 		return ResponseEntity.ok().contentLength(data.length)

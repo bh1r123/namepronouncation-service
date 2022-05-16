@@ -284,10 +284,8 @@ public class NPSService {
 		NamePronounciationRecord emprecord = this.getFilebyEmpId(empId);
 		
 		if (emprecord.getOverriden_Status().equalsIgnoreCase(OverridenStatusEnum.PENDING.getValue())) {
-			emprecord.setAudio_file(emprecord.getOverriden_file());
 			emprecord.setOverriden_Status(OverridenStatusEnum.APPROVED.getValue());
 			emprecord.setOpted_format(OptedFormatEnum.CUSTOM.getValue());
-			emprecord.setOverriden_file(null);
 			npsRepository.save(emprecord);
 			
 			NotificationsRequest request  = new NotificationsRequest();
@@ -342,7 +340,6 @@ public class NPSService {
 		}
 		NamePronounciationRecord emprecord = this.getFilebyEmpId(empId);
 		emprecord.setOverriden_Status(OverridenStatusEnum.REJECTED.getValue());
-		emprecord.setOverriden_file(null);
 		emprecord.setOpted_format(OptedFormatEnum.STANDARD.getValue());//actually to be set to prev format
 		npsRepository.save(emprecord);
 		
