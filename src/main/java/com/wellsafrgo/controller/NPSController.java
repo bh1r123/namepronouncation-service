@@ -58,8 +58,8 @@ public class NPSController {
 	}
 	
 	@GetMapping("/getAllEmpRecords")
-	public ResponseEntity<NameSearchResponse> getAllEmprecords() {
-		NameSearchResponse searchResponse = npsService.getAllEmpRecords();
+	public ResponseEntity<NameSearchResponse> getAllEmprecords(@RequestParam(required = false) String status) {
+		NameSearchResponse searchResponse = npsService.getAllEmpRecords(status);
 		System.out.println("record size : " + searchResponse.getSearchNameCount());
 		return ResponseEntity.ok(searchResponse);
 	}

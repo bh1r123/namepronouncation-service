@@ -68,11 +68,11 @@ public class NPSService {
 		return record;
 	}
 	
-	public NameSearchResponse getAllEmpRecords() {
-		
+	public NameSearchResponse getAllEmpRecords(String status) {
+		NameSearchResponse response = new NameSearchResponse();
 		List<NamePronounciationRecord> records = npsRepository.findAll();
 		
-		List<EmpRecordResponse> emprecords = records.stream().map(record -> {
+		List<EmpRecordResponse> allEmprecords = records.stream().map(record -> {
 			 EmpRecordResponse empInfo = new EmpRecordResponse();
 			  empInfo.setEmpId(record.getEmpid());
 			  empInfo.setFirst_name(record.getFirst_name());
@@ -82,9 +82,80 @@ public class NPSService {
 			  empInfo.setOptdFormat(record.getOpted_format());
 			  return empInfo;
 		  }).collect(Collectors.toList());
-		NameSearchResponse response = new NameSearchResponse();
-		response.setNpsList(emprecords);
-		response.setSearchNameCount(emprecords.size());
+		
+		List<EmpRecordResponse> newEmprecords = records.stream()
+				.filter(record -> record.getOverriden_Status().equalsIgnoreCase(OverridenStatusEnum.NEW.getValue()))
+				.map(record -> {
+					EmpRecordResponse empInfo = new EmpRecordResponse();
+					empInfo.setEmpId(record.getEmpid());
+					empInfo.setFirst_name(record.getFirst_name());
+					empInfo.setLast_name(record.getLast_name());
+					empInfo.setPreferred_name(record.getPreferred_name());
+					empInfo.setCountry(record.getCountry_code());
+					empInfo.setOptdFormat(record.getOpted_format());
+					return empInfo;
+				}).collect(Collectors.toList());
+		
+		List<EmpRecordResponse> approvedEmprecords = records.stream().filter(
+				record -> record.getOverriden_Status().equalsIgnoreCase(OverridenStatusEnum.APPROVED.getValue()))
+				.map(record -> {
+					EmpRecordResponse empInfo = new EmpRecordResponse();
+					empInfo.setEmpId(record.getEmpid());
+					empInfo.setFirst_name(record.getFirst_name());
+					empInfo.setLast_name(record.getLast_name());
+					empInfo.setPreferred_name(record.getPreferred_name());
+					empInfo.setCountry(record.getCountry_code());
+					empInfo.setOptdFormat(record.getOpted_format());
+					return empInfo;
+				}).collect(Collectors.toList());
+		
+		List<EmpRecordResponse> rejectedEmprecords = records.stream().filter(
+				record -> record.getOverriden_Status().equalsIgnoreCase(OverridenStatusEnum.REJECTED.getValue()))
+				.map(record -> {
+			 EmpRecordResponse empInfo = null;
+			  empInfo = new EmpRecordResponse();
+			  empInfo.setEmpId(record.getEmpid());
+			  empInfo.setFirst_name(record.getFirst_name());
+			  empInfo.setLast_name(record.getLast_name());
+			  empInfo.setPreferred_name(record.getPreferred_name());
+			  empInfo.setCountry(record.getCountry_code());
+			  empInfo.setOptdFormat(record.getOpted_format());
+			  return empInfo;
+		  }).collect(Collectors.toList());
+		
+		List<EmpRecordResponse> pendingEmprecords = records.stream()
+				.filter(record -> record.getOverriden_Status().equalsIgnoreCase(OverridenStatusEnum.PENDING.getValue()))
+				.map(record -> {
+					EmpRecordResponse empInfo = null;
+					empInfo = new EmpRecordResponse();
+					empInfo.setEmpId(record.getEmpid());
+					empInfo.setFirst_name(record.getFirst_name());
+					empInfo.setLast_name(record.getLast_name());
+					empInfo.setPreferred_name(record.getPreferred_name());
+					empInfo.setCountry(record.getCountry_code());
+					empInfo.setOptdFormat(record.getOpted_format());
+					return empInfo;
+				}).collect(Collectors.toList());
+		
+		if(status == null || status.isEmpty()) {
+			response.setNpsList(allEmprecords);
+			response.setSearchNameCount(allEmprecords.size());
+		} else if (status.equalsIgnoreCase(OverridenStatusEnum.APPROVED.getValue())) {
+			response.setNpsList(approvedEmprecords);
+			response.setSearchNameCount(approvedEmprecords.size());
+		} else if (status.equalsIgnoreCase(OverridenStatusEnum.PENDING.getValue())) {
+			response.setNpsList(pendingEmprecords);
+			response.setSearchNameCount(pendingEmprecords.size());
+		} else if (status.equalsIgnoreCase(OverridenStatusEnum.REJECTED.getValue())) {
+			response.setNpsList(rejectedEmprecords);
+			response.setSearchNameCount(rejectedEmprecords.size());
+		} else if (status.equalsIgnoreCase(OverridenStatusEnum.NEW.getValue())) {
+			response.setNpsList(newEmprecords);
+			response.setSearchNameCount(newEmprecords.size());
+		} else {
+			response.setNpsList(allEmprecords);
+			response.setSearchNameCount(allEmprecords.size());
+		}
 		return response;
 	}
 	
