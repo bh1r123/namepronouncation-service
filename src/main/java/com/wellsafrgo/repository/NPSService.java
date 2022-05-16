@@ -13,6 +13,9 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.wells.constants.ActionEnum;
+import com.wells.constants.NotificationTypeEnum;
+import com.wells.constants.NotificationsStatusEnum;
 import com.wells.constants.OptedEnum;
 import com.wells.constants.OptedFormatEnum;
 import com.wells.constants.OverridenStatusEnum;
@@ -23,6 +26,7 @@ import com.wellsafrgo.model.CountryData;
 import com.wellsafrgo.model.CountryRecord;
 import com.wellsafrgo.model.NPSDomain;
 import com.wellsafrgo.model.NamePronounciationRecord;
+import com.wellsafrgo.model.NotificationsRequest;
 import com.wellsafrgo.model.empUpdateRecord;
 import com.wellsfargo.response.EmpRecordResponse;
 import com.wellsfargo.response.NameSearchResponse;
@@ -33,6 +37,9 @@ public class NPSService {
 
 	@Autowired
 	private NPSRepository npsRepository;
+	
+	@Autowired
+	private NotificationsService notificationsService;
 	
 	@Autowired
 	private CountryRepository countryRepository;
@@ -242,6 +249,15 @@ public class NPSService {
 				emprecord.setChannel(empdata.getChannel());
 				emprecord.setAudio_url(empdata.getAudio_file_url());
 				npsRepository.save(emprecord);
+				
+				NotificationsRequest request  = new NotificationsRequest();
+				request.setAction(ActionEnum.ADMIN.getValue());
+				request.setEmpId(emprecord.getEmpid());
+				request.setMessage("Waiting for Admin approval");
+				request.setStatus(NotificationsStatusEnum.UNREAD.getValue());
+				request.setTypeofNotification(NotificationTypeEnum.ADMIN_PENDING.getValue());
+				notificationsService.insertNotification(request);
+				
 			} else {
 				throw new ResourceNotFoundException(
 						"Please register the employee in NamepronounciationTool before uploading the custom record");
@@ -266,6 +282,14 @@ public class NPSService {
 			emprecord.setOpted_format(OptedFormatEnum.CUSTOM.getValue());
 			emprecord.setOverriden_file(null);
 			npsRepository.save(emprecord);
+			
+			NotificationsRequest request  = new NotificationsRequest();
+			request.setAction(emprecord.getEmpid());
+			request.setEmpId(emprecord.getEmpid());
+			request.setMessage("Approved Custom record");
+			request.setStatus(NotificationsStatusEnum.UNREAD.getValue());
+			request.setTypeofNotification(NotificationTypeEnum.ADMIN_APPROVAL.getValue());
+			notificationsService.insertNotification(request);
 		} else {
 			throw new InvalidArgumentException("EMP should be in PENDING state before it needs approval");
 			
@@ -312,7 +336,16 @@ public class NPSService {
 		NamePronounciationRecord emprecord = this.getFilebyEmpId(empId);
 		emprecord.setOverriden_Status(OverridenStatusEnum.REJECTED.getValue());
 		emprecord.setOverriden_file(null);
+		emprecord.setOpted_format(OptedFormatEnum.STANDARD.getValue());//actually to be set to prev format
 		npsRepository.save(emprecord);
+		
+		NotificationsRequest request  = new NotificationsRequest();
+		request.setAction(emprecord.getEmpid());
+		request.setEmpId(emprecord.getEmpid());
+		request.setMessage("Admin Rejected record. Contact admin for more info");
+		request.setStatus(NotificationsStatusEnum.UNREAD.getValue());
+		request.setTypeofNotification(NotificationTypeEnum.ADMIN_REJECTION.getValue());
+		notificationsService.insertNotification(request);
 		//send update to notification table? notification to be received by user
 	}
 	

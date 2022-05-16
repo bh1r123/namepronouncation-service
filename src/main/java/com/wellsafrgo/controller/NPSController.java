@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wells.constants.OptedFormatEnum;
 import com.wellsafrgo.model.CountryData;
 import com.wellsafrgo.model.CountryRecord;
 import com.wellsafrgo.model.NPSDomain;
@@ -36,6 +34,7 @@ import com.wellsafrgo.model.empUpdateRecord;
 import com.wellsafrgo.repository.NPSService;
 import com.wellsfargo.response.EmpRecordResponse;
 import com.wellsfargo.response.NameSearchResponse;
+import com.wellsfargo.response.SuccessResponse;
 
 @CrossOrigin("*")
 @RestController
@@ -46,7 +45,7 @@ public class NPSController {
 	private NPSService npsService;
 
 	@PostMapping(value = "/save", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> save(@ModelAttribute NPSDomain npsData)
+	public ResponseEntity<SuccessResponse> save(@ModelAttribute NPSDomain npsData)
 			throws IOException, SQLException, URISyntaxException {
 		String message = "";
 		if(npsService.save(npsData)) {
@@ -54,7 +53,7 @@ public class NPSController {
 		} else {
 			message = "Unable to load the file currently for Emp : " + npsData.getEmpId();
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+		return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse(message));
 	}
 	
 	@GetMapping("/getAllEmpRecords")
@@ -113,11 +112,11 @@ public class NPSController {
 	}
 	
 	@DeleteMapping(value = "/deleteEmpRecord/{empId}" , produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> deleteRecord_emp(@PathVariable String empId)
+	public ResponseEntity<SuccessResponse> deleteRecord_emp(@PathVariable String empId)
 			throws IOException, SQLException, URISyntaxException {
 		npsService.deleteRecord(empId);
 		String message = "Successfully deleted the recrd for EmpId :  " + empId;
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+		return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse(message));
 
 	}
 	/*
@@ -125,45 +124,45 @@ public class NPSController {
 	 */
 	 
 	@PostMapping(value = "/updateEmpAudioRecord", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> updateRecord_emp(@ModelAttribute empUpdateRecord emprecord)
+	public ResponseEntity<SuccessResponse> updateRecord_emp(@ModelAttribute empUpdateRecord emprecord)
 			throws IOException, SQLException, URISyntaxException {
 		npsService.updateRecord(emprecord);
 		String message = "Successfully updated the record for EmpId :  " + emprecord.getEmpId();
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+		return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse(message));
 
 	}
 	
 	@PostMapping(value = "/ApproveEmpAudioRecord", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> approveEmpRecord(@RequestParam(required=true) String empId)
+	public ResponseEntity<SuccessResponse> approveEmpRecord(@RequestParam(required=true) String empId)
 			throws IOException, SQLException, URISyntaxException {
 		npsService.approveRecord(empId);
 		String message = "Successfully approved the custom record for EmpId :  " + empId;
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+		return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse(message));
 
 	}
 	
 	@PostMapping(value = "/OptOut", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> empOptOut(@RequestParam(required=true) String empId) throws Exception {
+	public ResponseEntity<SuccessResponse> empOptOut(@RequestParam(required=true) String empId) throws Exception {
 		npsService.empOptout(empId);
 		String message = "Successfully Opted out the Employee  :  " + empId;
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+		return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse(message));
 
 	}
 
 	@PostMapping(value = "/OptIn", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> empOptIn(@RequestParam(required=true) String empId) throws Exception {
+	public ResponseEntity<SuccessResponse> empOptIn(@RequestParam(required=true) String empId) throws Exception {
 		String message = npsService.empOptIn(empId);
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+		return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse(message));
 
 	}
 
 	
 	@PostMapping(value = "/RejectEmpAudioRecord", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> rejectEmpRecord(@RequestParam(required=true) String empId)
+	public ResponseEntity<SuccessResponse> rejectEmpRecord(@RequestParam(required=true) String empId)
 			throws IOException, SQLException, URISyntaxException {
 		npsService.rejectRecord(empId);
 		String message = "Successfully rejected the custom record for EmpId :  " + empId;
-		return ResponseEntity.status(HttpStatus.OK).body(message);
+		return ResponseEntity.status(HttpStatus.OK).body(new SuccessResponse(message));
 
 	}
 	
